@@ -1,0 +1,17 @@
+1.
+id_produktu -> nazwa_produktu, cena_produktu, VAT
+id_klienta -> nazwa_klienta
+dat_zamowienia ->id_klienta, ilosc, cena
+suma_brutto -> suma_netto, vat
+
+
+2.
+id_produktu, id_klienta
+
+3.
+id_pomieszczenia -> numer_pomieszczenia, powierzchnia
+id_budynku -> liczba_okien, liczba_drzwi, ulica, miasto, kod_pocztowy
+kod_pocztowy -> miasto
+
+
+klucze kandydujace: id_pomieszczenia, id_budynku

@@ -213,13 +213,13 @@ WHERE stanowisko = 'Kierownik';
 SELECT SUM(kwota) AS suma_wynagrodzen
 FROM ksiegowosc.pensja;
 
----
+---f
 
 SELECT stanowisko, SUM(kwota) AS suma_wynagrodzen
 FROM ksiegowosc.pensja
 GROUP BY stanowisko;
 
----
+---g
 
 SELECT p.stanowisko, COUNT(*) AS liczba_premii
 FROM ksiegowosc.pensja p
@@ -227,53 +227,56 @@ JOIN ksiegowosc.wynagrodzenie w ON p.id_pensji = w.id_pensji
 WHERE w.id_premii IS NOT NULL
 GROUP BY p.stanowisko;
 
----
+---h
 
 DELETE FROM ksiegowosc.pensja
 WHERE kwota < 1200;
 
 ---
 
+--a
 UPDATE ksiegowosc.pracownicy
 SET telefon = CONCAT('(+48) ', telefon);
 
----
+SELECT * 
+FROM ksiegowosc.pracownicy;
 
+
+--b
 UPDATE ksiegowosc.pracownicy
 SET telefon = CONCAT(SUBSTRING(telefon, 1, 3), '-', SUBSTRING(telefon, 4, 3), '-', SUBSTRING(telefon, 7, 3));
 
----
+SELECT * 
+FROM ksiegowosc.pracownicy;
 
-SELECT *
+--c
+SELECT 
+    id_pracownika,
+    UPPER(imie) AS imie,
+    UPPER(nazwisko) AS nazwisko,
+    adres,
+    telefon
 FROM ksiegowosc.pracownicy
-WHERE UPPER(nazwisko) = (
-    SELECT UPPER(nazwisko)
-    FROM ksiegowosc.pracownicy
-    ORDER BY LENGTH(nazwisko) DESC
-    LIMIT 1
-);
+ORDER BY LENGTH(nazwisko) DESC
+LIMIT 1;
 
 
----
-
-SELECT p.*, MD5(pe.kwota) AS pensja_md5
+--d
+SELECT p.imie, p.nazwisko, MD5(CAST(pensja.kwota AS CHAR)) AS zakodowana_pensja
 FROM ksiegowosc.pracownicy p
 JOIN ksiegowosc.wynagrodzenie w ON p.id_pracownika = w.id_pracownika
-JOIN ksiegowosc.pensja pe ON w.id_pensji = pe.id_pensji;
+JOIN ksiegowosc.pensja pensja ON w.id_pensji = pensja.id_pensji;
 
 
----
-
-SELECT p.imie, p.nazwisko, pe.kwota AS pensja, pr.kwota AS premia
+--e
+SELECT p.id_pracownika, p.imie, p.nazwisko, pensja.stanowisko, pensja.kwota AS pensja, premie.kwota AS premia
 FROM ksiegowosc.pracownicy p
 LEFT JOIN ksiegowosc.wynagrodzenie w ON p.id_pracownika = w.id_pracownika
-LEFT JOIN ksiegowosc.pensja pe ON w.id_pensji = pe.id_pensji
-LEFT JOIN ksiegowosc.premie pr ON w.id_premii = pr.id_premii;
+LEFT JOIN ksiegowosc.pensja pensja ON w.id_pensji = pensja.id_pensji
+LEFT JOIN ksiegowosc.premie premie ON w.id_premii = premie.id_premii;
 
 
----
-
-
+--f
 SELECT CONCAT('Pracownik ', p.imie, ' ', p.nazwisko,', w dniu ', w.data, ' otrzymał pensję całkowitą na kwotę ',
 (pensja.kwota + premie.kwota), ' zł, gdzie wynagrodzenie zasadnicze wynosiło: ',
 pensja.kwota, ' zł, premia: ', premie.kwota, ' zł, nadgodziny: 0 zł') AS raport
@@ -281,3 +284,10 @@ FROM ksiegowosc.pracownicy p
 JOIN ksiegowosc.wynagrodzenie w ON p.id_pracownika = w.id_pracownika
 JOIN ksiegowosc.pensja pensja ON w.id_pensji = pensja.id_pensji
 LEFT JOIN ksiegowosc.premie premie ON w.id_premii = premie.id_premii;
+
+
+;
+
+
+
+
